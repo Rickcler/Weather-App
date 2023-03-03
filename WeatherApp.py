@@ -15,7 +15,7 @@ def get_country_code(country_name):
         return country.alpha_2
     except AttributeError:
         return None
-# Defining the layout of the window
+# Defining the layout of the initial input value
 layout1 = [
     [sg.Text('Enter your country:'), sg.InputText(key="country")],
     [sg.Text('Enter your city:'), sg.InputText(key="city")],
@@ -27,22 +27,27 @@ window1 = sg.Window('Weather App', layout1)
 # Creating Event Loop to read in the Country/City data
 while True:
     event, values = window1.read()
+    #Ending Programm in it's closed or the cancel button is pressed
     if event in (None, 'Cancel'):
         window1.close()
         break
+    #Creating Country and City variable from the Input, when Ok button is pressed
     elif event == 'Ok':
         Country = values["country"]
         City = values["city"]
         window1.close()
         break
 
-
+#Next step is to get the ISO-Code from the Country input   
 while True:
     try:
+        #If it works the loop will not continue
         Country_Code = get_country_code(Country).lower()
         break
     except Exception as e:
+        #If it doesn't work, the user gets another try until the Country can be converted into an ISO-Code
         while True:
+            #Creating a new Layout that calls attention to the problem with the country name 
             layout2 =[
                     [sg.Text("That didn't work! Please try again.")],
                     [sg.Text("You didn't put in the country name correctly. Please use the official English name")],
@@ -52,46 +57,56 @@ while True:
                     ]
             window2 = sg.Window('Weather App', layout2)
             event, values = window2.read()
+            #Giving the user another option to close the window
             if event in (None, 'Cancel'):
                 window2.close()
                 break
+            #Updating country and city names
             elif event == 'Ok':
                 Country = values["country"]
                 City = values["city"]
                 window2.close()
                 break
+    #Leaving the loop in case the user Canceled or closed the window
     if event in (None, 'Cancel'):
         window2.close()
         break
 
-
+#Creating a variable that combinesthe Cities Name and the Country Code in the way appropriate for the API 
 city_name = f"{City},{Country_Code}"
+#Creating URL Variable and requesting the data
 url = f'http://api.openweathermap.org/data/2.5/weather?q={city_name}&appid={api_key}&units=metric'
 response = requests.get(url)
 
+#Now checking if Openweather map accepted the request
 while True:
-    if response.status_code == 200:
+    if response.status_code == 200: #Status_code 200 means that the request was succesfull
         break
     else:
+        #As we made sure earlier, that the country name is right, it must about the city.
         while True:
             layout2 =[
                       [sg.Text("That didn't work! Please try again.")],
-                      [sg.Text("Please enter the city in the countries language")],
+                      [sg.Text("Please enter the name of the city in the language of the country.")],
                       [sg.Text('Enter your city:'), sg.InputText(key="city")],
                       [sg.Button('Ok'), sg.Button('Cancel')]
                      ]
             window2 = sg.Window('Weather App', layout2)
             event, values = window2.read()
+            #Closing the window if the user wants to
             if event in (None, 'Cancel'):
                 window2.close()
                 break
+            #Updating the city variable
             elif event == 'Ok':
                 City = values["city"]
                 window2.close()
                 break
+    #Closing the window if the user wants to
     if event in (None, 'Cancel'):
         window2.close()
         break
+    #Updating the request
     city_name = f"{City},{Country_Code}"
     url = f'http://api.openweathermap.org/data/2.5/weather?q={city_name}&appid={api_key}&units=metric'
     response = requests.get(url)
@@ -111,15 +126,39 @@ Humidity = weather_data["main"]["humidity"]
 
 layout3 = [ 
           [sg.Text(f"General Description: {General_description}")],
-          [sg.Text(f"Temperature: {Temperature_Celsius}°C(Feels like {Felt_Temperature}°C)")],
+          [sg.Text(f"Temperature: {Temperature_Celsius}°C(Feels like {Felt_Temperature}°C)"), sg.Button("Fahrenheit")],
           [sg.Text(f"Wind Speed: {Wind_Speed} m/s")],
           [sg.Text(f"Humidity: {Humidity}%")],
           [sg.Button("Close")]
 ]
 window3 = sg.Window(title = "Results", layout = layout3)
 
+
+#Showing the results and adding a button to change between Celsius and Fahrenheit
 while True:
     event = window3.read()[0]
     if event in (None, "Close"):
         window3.close()
         break
+    elif event == "Fahrenheit":
+        Temperature_Fahrenheit = Temperature_Celsius * 9/5 + 32
+        Felt_Temperature_Fahrenheit = Felt_Temperature * 9/5 +32
+        layout3 = [ 
+          [sg.Text(f"General Description: {General_description}")],
+          [sg.Text(f"Temperature: {Temperature_Fahrenheit}°F(Feels like {Felt_Temperature_Fahrenheit}°F)"), sg.Button("Celsius")],
+          [sg.Text(f"Wind Speed: {Wind_Speed} m/s")],
+          [sg.Text(f"Humidity: {Humidity}%")],
+          [sg.Button("Close")]
+        ]
+        window3.close()
+        window3 = sg.Window(title = "Results", layout = layout3)
+    elif event == "Celsius":
+        layout3 = [ 
+          [sg.Text(f"General Description: {General_description}")],
+          [sg.Text(f"Temperature: {Temperature_Celsius}°C(Feels like {Felt_Temperature}°C)"), sg.Button("Fahrenheit")],
+          [sg.Text(f"Wind Speed: {Wind_Speed} m/s")],
+          [sg.Text(f"Humidity: {Humidity}%")],
+          [sg.Button("Close")]
+        ]
+        window3.close()
+        window3 = sg.Window(title = "Results", layout = layout3)
