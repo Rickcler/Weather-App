@@ -1,9 +1,11 @@
 #Reqeusts for Requesting the data
 import requests
-# PySimpleGUI for building the GUI
+#PySimpleGUI for building the GUI
 import PySimpleGUI as sg
-# PyCountry to convert the Country Name to Iso-Code
+#PyCountry to convert the Country Name to Iso-Code
 import pycountry
+#Base64 for the icon in the results
+import base64
 
 #Api Key from Openweathermap
 api_key = "64cdfea0dbfd192437a08fdf01385a82"
@@ -19,7 +21,7 @@ def get_country_code(country_name):
 layout1 = [
     [sg.Text('Enter your country:'), sg.InputText(key="country")],
     [sg.Text('Enter your city:'), sg.InputText(key="city")],
-    [sg.Button('Ok'), sg.Button('Cancel')]
+    [sg.Button('Ok', button_color = ("black", "green")), sg.Button('Cancel', button_color = ("white", "red"))]
 ]
 # Creating the window
 window1 = sg.Window('Weather App', layout1)
@@ -40,6 +42,8 @@ while True:
 
 #Next step is to get the ISO-Code from the Country input   
 while True:
+    if event == "Cancel":
+        break
     try:
         #If it works the loop will not continue
         Country_Code = get_country_code(Country).lower()
@@ -53,7 +57,7 @@ while True:
                     [sg.Text("You didn't put in the country name correctly. Please use the official English name")],
                     [sg.Text('Enter your country:'), sg.InputText(key="country")],
                     [sg.Text('Enter your city:'), sg.InputText(key="city")],
-                    [sg.Button('Ok'), sg.Button('Cancel')]
+                    [sg.Button('Ok', button_color = ("black", "green")), sg.Button('Cancel',button_color= ("white", "red"))]
                     ]
             window2 = sg.Window('Weather App', layout2)
             event, values = window2.read()
@@ -89,7 +93,7 @@ while True:
                       [sg.Text("That didn't work! Please try again.")],
                       [sg.Text("Please enter the name of the city in the language of the country.")],
                       [sg.Text('Enter your city:'), sg.InputText(key="city")],
-                      [sg.Button('Ok'), sg.Button('Cancel')]
+                      [sg.Button('Ok', button_color = ("black", "green")), sg.Button('Cancel', button_color= ("white", "red"))]
                      ]
             window2 = sg.Window('Weather App', layout2)
             event, values = window2.read()
@@ -116,6 +120,12 @@ while True:
 weather_data = response.json()
 #Description of Weather
 General_description =  weather_data['weather'][0]['description']
+#Corresponding Icon
+icon_id = weather_data["weather"][0]["icon"]
+icon_url = f"http://openweathermap.org/img/wn/{icon_id}.png"
+icon_response = requests.get(icon_url)
+icon_base64 = base64.b64encode(icon_response.content)
+
 #Temperature
 Temperature_Celsius = weather_data["main"]["temp"]
 Felt_Temperature = weather_data["main"]["feels_like"]   
@@ -124,9 +134,11 @@ Wind_Speed = weather_data["wind"]["speed"]
 #Humidity
 Humidity = weather_data["main"]["humidity"]
 
+
+
 layout3 = [ 
-          [sg.Text(f"General Description: {General_description}")],
-          [sg.Text(f"Temperature: {Temperature_Celsius}°C(Feels like {Felt_Temperature}°C)"), sg.Button("Fahrenheit")],
+          [sg.Text(f"General Description: {General_description}"), sg.Image(data=icon_base64, size=(25, 25))],
+          [sg.Text(f"Temperature: {Temperature_Celsius}°C (Feels like {Felt_Temperature}°C)"), sg.Button("Fahrenheit")],
           [sg.Text(f"Wind Speed: {Wind_Speed} m/s")],
           [sg.Text(f"Humidity: {Humidity}%")],
           [sg.Button("Close")]
@@ -144,8 +156,8 @@ while True:
         Temperature_Fahrenheit = Temperature_Celsius * 9/5 + 32
         Felt_Temperature_Fahrenheit = Felt_Temperature * 9/5 +32
         layout3 = [ 
-          [sg.Text(f"General Description: {General_description}")],
-          [sg.Text(f"Temperature: {Temperature_Fahrenheit}°F(Feels like {Felt_Temperature_Fahrenheit}°F)"), sg.Button("Celsius")],
+          [sg.Text(f"General Description: {General_description}"), sg.Image(data=icon_base64, size=(25, 25))],
+          [sg.Text(f"Temperature: {Temperature_Fahrenheit:.2f}°F (Feels like {Felt_Temperature_Fahrenheit:.2f}°F)"), sg.Button("Celsius")],
           [sg.Text(f"Wind Speed: {Wind_Speed} m/s")],
           [sg.Text(f"Humidity: {Humidity}%")],
           [sg.Button("Close")]
@@ -154,8 +166,8 @@ while True:
         window3 = sg.Window(title = "Results", layout = layout3)
     elif event == "Celsius":
         layout3 = [ 
-          [sg.Text(f"General Description: {General_description}")],
-          [sg.Text(f"Temperature: {Temperature_Celsius}°C(Feels like {Felt_Temperature}°C)"), sg.Button("Fahrenheit")],
+          [sg.Text(f"General Description: {General_description}"),  sg.Image(data=icon_base64, size=(25, 25))],
+          [sg.Text(f"Temperature: {Temperature_Celsius}°C (Feels like {Felt_Temperature}°C)"), sg.Button("Fahrenheit")],
           [sg.Text(f"Wind Speed: {Wind_Speed} m/s")],
           [sg.Text(f"Humidity: {Humidity}%")],
           [sg.Button("Close")]
