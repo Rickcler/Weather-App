@@ -4,7 +4,7 @@ import requests
 import PySimpleGUI as sg
 #PyCountry to convert the Country Name to Iso-Code
 import pycountry
-#Base64 for the icon in the results
+#Base64 for converting the Icon from binary into ASCII
 import base64
 
 #Api Key from Openweathermap
@@ -21,7 +21,7 @@ def get_country_code(country_name):
 layout1 = [
     [sg.Text('Enter your country:'), sg.InputText(key="country")],
     [sg.Text('Enter your city:'), sg.InputText(key="city")],
-    [sg.Button('Ok', button_color = ("black", "green")), sg.Button('Cancel', button_color = ("white", "red"))]
+    [sg.Button('Ok', button_color = ("black", "green"), bind_return_key = True), sg.Button('Cancel', button_color = ("white", "red"))]
 ]
 # Creating the window
 window1 = sg.Window('Weather App', layout1)
@@ -57,7 +57,7 @@ while True:
                     [sg.Text("You didn't put in the country name correctly. Please use the official English name")],
                     [sg.Text('Enter your country:'), sg.InputText(key="country")],
                     [sg.Text('Enter your city:'), sg.InputText(key="city")],
-                    [sg.Button('Ok', button_color = ("black", "green")), sg.Button('Cancel',button_color= ("white", "red"))]
+                    [sg.Button('Ok', button_color = ("black", "green"), bind_return_key = True), sg.Button('Cancel',button_color= ("white", "red"))]
                     ]
             window2 = sg.Window('Weather App', layout2)
             event, values = window2.read()
@@ -93,7 +93,7 @@ while True:
                       [sg.Text("That didn't work! Please try again.")],
                       [sg.Text("Please enter the name of the city in the language of the country.")],
                       [sg.Text('Enter your city:'), sg.InputText(key="city")],
-                      [sg.Button('Ok', button_color = ("black", "green")), sg.Button('Cancel', button_color= ("white", "red"))]
+                      [sg.Button('Ok', button_color = ("black", "green"), bind_return_key = True), sg.Button('Cancel', button_color= ("white", "red"))]
                      ]
             window2 = sg.Window('Weather App', layout2)
             event, values = window2.read()
@@ -119,7 +119,7 @@ while True:
 #Extracting the weather data from the JSON response
 weather_data = response.json()
 #Description of Weather
-General_description =  weather_data['weather'][0]['description']
+General_description =  weather_data['weather'][0]['description'].capitalize()
 #Corresponding Icon
 icon_id = weather_data["weather"][0]["icon"]
 icon_url = f"http://openweathermap.org/img/wn/{icon_id}.png"
@@ -174,3 +174,5 @@ while True:
         ]
         window3.close()
         window3 = sg.Window(title = "Results", layout = layout3)
+
+print("PySimpleGUI version:", sg.__version__)
