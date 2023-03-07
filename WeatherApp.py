@@ -21,11 +21,11 @@ def get_country_code(country_name):
 layout1 = [
     [sg.Text("Please enter your location data!")],
     [sg.Frame(
-        layout =[
-        [sg.Text('Country:', size = (20, 1)), sg.InputText(key="country", size = (20, 1))],
-        [sg.Text('City:', size = (20, 1)), sg.InputText(key="city", size = (20, 1))]],
-        title = "Enter here:", relief = sg.RELIEF_GROOVE
-            )
+                layout =[
+                [sg.Text('Country:', size = (20, 1)), sg.InputText(key="country", size = (20, 1))],
+                [sg.Text('City:', size = (20, 1)), sg.InputText(key="city", size = (20, 1))]],
+                title = "Enter here:", relief = sg.RELIEF_GROOVE
+             )
     ],
     [sg.Button('Ok', button_color = ("black", "green"), bind_return_key = True), sg.Button('Cancel',button_color= ("white", "red"))]
 
@@ -154,13 +154,16 @@ Humidity = weather_data["main"]["humidity"]
 
 
 
-layout3 = [ 
-          [sg.Text(f"General Description: {General_description}"), sg.Image(data=icon_base64, size=(25, 25))],
-          [sg.Text(f"Temperature: {Temperature_Celsius}°C (Feels like {Felt_Temperature}°C)"), sg.Button("Fahrenheit")],
-          [sg.Text(f"Wind Speed: {Wind_Speed} m/s")],
-          [sg.Text(f"Humidity: {Humidity}%")],
-          [sg.Button("Close")]
-]
+layout3 = [[sg.Text(f"Weather in {City}:")],
+           [sg.Frame( layout = [
+                      [sg.Text(f"General Description: {General_description}"), sg.Image(data=icon_base64, size=(25, 25))],
+                      [sg.Text(f"Temperature: {Temperature_Celsius}°C (Feels like {Felt_Temperature}°C)"), sg.Button("Fahrenheit")],
+                      [sg.Text(f"Wind Speed: {Wind_Speed} m/s")],
+                      [sg.Text(f"Humidity: {Humidity}%")],
+                      [sg.Button("Close")]], title = "Results", relief = sg.RELIEF_GROOVE
+                    )
+           ]
+          ]
 window3 = sg.Window(title = "Results", layout = layout3)
 
 
@@ -173,22 +176,28 @@ while True:
     elif event == "Fahrenheit":
         Temperature_Fahrenheit = Temperature_Celsius * 9/5 + 32
         Felt_Temperature_Fahrenheit = Felt_Temperature * 9/5 +32
-        layout3 = [ 
-          [sg.Text(f"General Description: {General_description}"), sg.Image(data=icon_base64, size=(25, 25))],
-          [sg.Text(f"Temperature: {Temperature_Fahrenheit:.2f}°F (Feels like {Felt_Temperature_Fahrenheit:.2f}°F)"), sg.Button("Celsius")],
-          [sg.Text(f"Wind Speed: {Wind_Speed} m/s")],
-          [sg.Text(f"Humidity: {Humidity}%")],
-          [sg.Button("Close")]
-        ]
+        layout3 = [[sg.Text(f"Weather in {City}:")],
+                   [sg.Frame( layout = [
+                                        [sg.Text(f"General Description: {General_description}"), sg.Image(data=icon_base64, size=(25, 25))],
+                                        [sg.Text(f"Temperature: {Temperature_Fahrenheit}°F (Feels like {Felt_Temperature_Fahrenheit}°F)"), sg.Button("Celsius")],
+                                        [sg.Text(f"Wind Speed: {Wind_Speed} m/s")],
+                                        [sg.Text(f"Humidity: {Humidity}%")],
+                                        [sg.Button("Close")]], title = "Results", relief = sg.RELIEF_GROOVE
+                            )
+                   ]
+                  ]
         window3.close()
         window3 = sg.Window(title = "Results", layout = layout3)
     elif event == "Celsius":
-        layout3 = [ 
-          [sg.Text(f"General Description: {General_description}"),  sg.Image(data=icon_base64, size=(25, 25))],
-          [sg.Text(f"Temperature: {Temperature_Celsius}°C (Feels like {Felt_Temperature}°C)"), sg.Button("Fahrenheit")],
-          [sg.Text(f"Wind Speed: {Wind_Speed} m/s")],
-          [sg.Text(f"Humidity: {Humidity}%")],
-          [sg.Button("Close")]
-        ]
+        layout3 = [[sg.Text(f"Weather in {City}:")],
+                   [sg.Frame( layout = [
+                                        [sg.Text(f"General Description: {General_description}"), sg.Image(data=icon_base64, size=(25, 25))],
+                                        [sg.Text(f"Temperature: {Temperature_Celsius}°C (Feels like {Felt_Temperature}°C)"), sg.Button("Fahrenheit")],
+                                        [sg.Text(f"Wind Speed: {Wind_Speed} m/s")],
+                                        [sg.Text(f"Humidity: {Humidity}%")],
+                                        [sg.Button("Close")]], title = "Results", relief = sg.RELIEF_GROOVE
+                            )
+                   ]
+                 ]
         window3.close()
         window3 = sg.Window(title = "Results", layout = layout3)
